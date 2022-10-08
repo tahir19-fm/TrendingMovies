@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trendingrepos.data.Results
-import com.example.trendingrepos.data.movies
 import com.example.trendingrepos.databinding.ActivityMainBinding
 import com.example.trendingrepos.utils.EspressoIdlingResource
 
@@ -21,7 +20,8 @@ class MainActivity : AppCompatActivity() {
     private var page =1
     private var isLoading=false
     private var isLastPage=false
-    val reposList: MutableList<Results> = mutableListOf()
+    private  var  reposList: MutableList<Results> = mutableListOf()
+    private lateinit var list:MutableList<Results>
     companion object{
         const val SORT_BY_POPULARITY=1
         const val SORT_BY_RATING=2
@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val layoutManager=GridLayoutManager(this,2)
+        list=ArrayList()
         val adapter = MovieListAdapter(reposList)
         binding.rvRoot.layoutManager=layoutManager
         binding.rvRoot.adapter = adapter
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 //            }
             binding.sortByPopularity.setTextColor(resources.getColor(R.color.black))
             binding.sortByVoting.setTextColor(resources.getColor(R.color.black))
+
             reposList.addAll(it)
             if (viewModel.sortState.value== SORT_BY_POPULARITY){
                 binding.sortByPopularity.setTextColor(resources.getColor(R.color.red))
@@ -78,13 +80,12 @@ class MainActivity : AppCompatActivity() {
                 binding.sortByPopularity.setTextColor(resources.getColor(R.color.black))
                 reposList.sortWith(compareByDescending { it.voteAverage })
             }
-
-            if(page==1){
             adapter.notifyDataSetChanged()
-            }else
-            {
-               adapter.notifyItemRangeInserted(layoutManager.itemCount-1, reposList.size)
-            }
+            viewModel.setDataShare(reposList)
+
+
+             //  adapter.notifyItemRangeInserted(layoutManager.itemCount-1, reposList.size)
+
             binding.progressBar.visibility=View.GONE
             isLoading=false
 

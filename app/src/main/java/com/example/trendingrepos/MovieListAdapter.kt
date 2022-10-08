@@ -24,11 +24,11 @@ class MovieListAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieListAdapter.ViewHolder, position: Int) {
-
+        val item=repositories[position]
         holder.itemView.setOnClickListener{v->
             val intent = Intent(v.context, MovieDetailsActivity::class.java)
-            intent.putExtra("position", position.toString())
-            Log.d("position", position.toString())
+            intent.putExtra("id",item.id.toString())
+            Log.d("id", item.id.toString())
             v.context.startActivity(intent)
         }
         holder.setData(repositories[position])

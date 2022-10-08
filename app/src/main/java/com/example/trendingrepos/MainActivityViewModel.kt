@@ -13,7 +13,6 @@ class MainActivityViewModel: ViewModel() {
 
     init {
         isRefreshing.value = false
-        fetchMovies(1)
     }
 
     fun getMovies() : LiveData<List<Results>> {
@@ -48,6 +47,13 @@ class MainActivityViewModel: ViewModel() {
 
     fun setSortState(state:Int){
         _sortState.value=state
+    }
+    private val _dataShare : MutableLiveData<List<Results>> ?= MutableLiveData()
+    val dataShare : MutableLiveData<List<Results>>?
+        get() = _dataShare
+
+    fun setDataShare(state: List<Results>){
+        _dataShare?.value =state
     }
 
 }
