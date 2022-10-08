@@ -27,8 +27,13 @@ fun fetchRepositories(
             val result =  retrofit.getMovieDetail(id)
           // movieData = result.body()!!
           val res=result.body()
-            val id=res?.get("id")?.toString()
+            var img=res?.get("poster_path").toString()
+            img=IMAGE_BASE+ img.substring(1, img.length -1);
            Log.d("moviedet",id.toString())
+
+            param.onSuccess(RequiuredData(img,res?.get("overview")?.toString()!!,
+                res.get("vote_average")?.toString()!!,
+                res.get("popularity")?.toString()!!, res.get("title")?.toString()!!))
 
         }
         runBlocking {

@@ -9,10 +9,6 @@ class DetailActivityViewModel: ViewModel()  {
     private val errorResponse = MutableLiveData<String>()
     private val isRefreshing = MutableLiveData<Boolean>()
     private val repo: MovieDetailRepo = MovieDetailRepo()
-    init {
-        isRefreshing.value = false
-        fetchMovieDetail("723419")
-    }
 
     fun getMovies() : LiveData<RequiuredData> {
         return movieDataList
@@ -28,13 +24,11 @@ class DetailActivityViewModel: ViewModel()  {
         repo.fetchRepositories(object : ApiCallbackWithRes<RequiuredData> {
             override fun onSuccess(response: RequiuredData) {
                 movieDataList.postValue(response)
-                isRefreshing.value = false
 
             }
 
             override fun onError(msg: String) {
                 errorResponse.postValue(msg)
-                isRefreshing.value = false
 
             }
 

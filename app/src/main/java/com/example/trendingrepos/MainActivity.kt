@@ -2,6 +2,7 @@ package com.example.trendingrepos
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -52,7 +53,10 @@ class MainActivity : AppCompatActivity() {
                        page++
                        isLoading=true
                        binding.progressBar.visibility= View.VISIBLE
-                       loadMore()
+                       Handler().postDelayed({
+                           loadMore()
+                       }, 5000)
+
                    }
                 }
 
@@ -62,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         if (BuildConfig.IS_TESTING.get())
             EspressoIdlingResource.increment()
-
+        viewModel.fetchMovies(1)
         viewModel.getMovies().observe(this, Observer {
 //            if(reposList.isNotEmpty()) {
 //                reposList.clear()
