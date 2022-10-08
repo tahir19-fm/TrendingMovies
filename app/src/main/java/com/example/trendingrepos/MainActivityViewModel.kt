@@ -12,10 +12,10 @@ class MainActivityViewModel: ViewModel() {
 
     init {
         isRefreshing.value = false
-        fetchRepositories(1)
+        fetchMovies(1)
     }
 
-    fun getRepositories() : LiveData<List<movieData>> {
+    fun getMovies() : LiveData<List<movieData>> {
         return movieDataList
     }
     fun getErrorReponse() : LiveData<String> {
@@ -24,7 +24,7 @@ class MainActivityViewModel: ViewModel() {
     fun getisRefreshing() : LiveData<Boolean> {
         return isRefreshing
     }
-    fun fetchRepositories(page:Int) {
+    fun fetchMovies(page:Int) {
         isRefreshing.value = true
          repo.fetchRepositories(object : ApiCallbackWithRes<MutableList<movieData>> {
              override fun onSuccess(response: MutableList<movieData>) {
@@ -41,4 +41,12 @@ class MainActivityViewModel: ViewModel() {
 
          },page)
     }
+    private val _sortState = MutableLiveData<Int>()
+    val sortState : LiveData<Int>
+        get() = _sortState
+
+    fun setSortState(state:Int){
+        _sortState.value=state
+    }
+
 }

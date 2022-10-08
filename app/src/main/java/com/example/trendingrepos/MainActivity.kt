@@ -2,13 +2,13 @@ package com.example.trendingrepos
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trendingrepos.databinding.ActivityMainBinding
 import com.example.trendingrepos.utils.EspressoIdlingResource
@@ -20,16 +20,20 @@ class MainActivity : AppCompatActivity() {
     private var isLoading=false
     private var isLastPage=false
     val reposList: MutableList<movieData> = mutableListOf()
+    companion object{
+        const val SORT_BY_POPULARITY=1
+        const val SORT_BY_RATING=2
+        const val NO_SORTING=3
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val layoutManager=GridLayoutManager(this,2)
-
         val adapter = MovieListAdapter(reposList)
         binding.rvRoot.layoutManager=layoutManager
         binding.rvRoot.adapter = adapter
         binding.rvRoot.setHasFixedSize(true)
-        binding.rvRoot.addItemDecoration(DividerItemDecoration(this, LinearLayoutManager.VERTICAL))
 
         binding.rvRoot.addOnScrollListener(object : RecyclerView.OnScrollListener()
         {
@@ -39,9 +43,12 @@ class MainActivity : AppCompatActivity() {
                val visibleItem=layoutManager.childCount
                 val totalItem=layoutManager.itemCount
                 val firstVisibleItem=layoutManager.findFirstVisibleItemPosition()
-                if(!isLastPage&&!isLoading) {
+                Log.d("scroll", dy.toString())
+                if(!isLastPage&&!isLoading&&dy>0) {
                    if((visibleItem+firstVisibleItem>=totalItem)&&firstVisibleItem>=0){
                        page++
+                       isLoading=true
+                       binding.progressBar.visibility= View.VISIBLE
                        loadMore()
                    }
                 }
@@ -53,13 +60,30 @@ class MainActivity : AppCompatActivity() {
         if (BuildConfig.IS_TESTING.get())
             EspressoIdlingResource.increment()
 
-        viewModel.getRepositories().observe(this, Observer {
+        viewModel.getMovies().observe(this, Observer {
 //            if(reposList.isNotEmpty()) {
 //                reposList.clear()
 //            }
+            binding.sortByPopularity.setTextColor(resources.getColor(R.color.black))
+            binding.sortByVoting.setTextColor(resources.getColor(R.color.black))
             reposList.addAll(it)
+            if (viewModel.sortState.value== SORT_BY_POPULARITY){
+                binding.sortByPopularity.setTextColor(resources.getColor(R.color.red))
+                binding.sortByVoting.setTextColor(resources.getColor(R.color.black))
+                reposList.sortWith(compareByDescending { it.popularity })
+            }else if (viewModel.sortState.value== SORT_BY_RATING){
+                binding.sortByVoting.setTextColor(resources.getColor(R.color.red))
+                binding.sortByPopularity.setTextColor(resources.getColor(R.color.black))
+                reposList.sortWith(compareByDescending { it.voteAvg })
+            }
 
-                adapter.notifyDataSetChanged()
+            if(page==1){
+            adapter.notifyDataSetChanged()
+            }else
+            {
+               adapter.notifyItemRangeInserted(layoutManager.itemCount-1, reposList.size)
+            }
+            binding.progressBar.visibility=View.GONE
             isLoading=false
 
             if (!EspressoIdlingResource.idlingResource.isIdleNow) {
@@ -74,15 +98,25 @@ class MainActivity : AppCompatActivity() {
             binding.swipeRefresh.isRefreshing = it
         })
         binding.swipeRefresh.setOnRefreshListener {
+            viewModel.setSortState(NO_SORTING)
             isLoading=true
             reposList.clear()
-            viewModel.fetchRepositories(1)
+            viewModel.fetchMovies(1)
             page=1
+        }
+        binding.sortByPopularity.setOnClickListener{
+            viewModel.setSortState(SORT_BY_POPULARITY)
+            reposList.clear()
+            viewModel.fetchMovies(1)
+        }
+        binding.sortByVoting.setOnClickListener{
+            viewModel.setSortState(SORT_BY_RATING)
+            reposList.clear()
+            viewModel.fetchMovies(1)
         }
     }
 
     private fun loadMore() {
-        isLoading=true
-        viewModel.fetchRepositories(page)
+        viewModel.fetchMovies(page)
     }
 }

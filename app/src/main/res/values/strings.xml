@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TrendingRepos</string>
+    <string name="app_name">TrendingMovies</string>
     <string name="repo_name">Repo Name: %1$s</string>
     <string name="repo_desc">Description: %1$s</string>
 </resources>

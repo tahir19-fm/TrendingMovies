@@ -17,7 +17,7 @@ class MainActivityRepo {
     val retrofit=RetrofitHelper.getRetroInstance().create(ApiInterface::class.java)
         try {
             var movieData:movies
-
+            val IMAGE_BASE="https://image.tmdb.org/t/p/w500"
 
              val job=   GlobalScope.launch {
                     val result = retrofit.getMovies(page)
@@ -27,13 +27,13 @@ class MainActivityRepo {
                     for (item in movieData.results) {
                         Log.d("res", item.title.toString())
                         var title: String
-                        if (item.title == null) {
-                            title = "sorry not able to load"
-                        } else {
+                        if (item.title != null) {
+                            val imgUrl=IMAGE_BASE+item.posterPath.toString()
+                            Log.d("image",imgUrl)
                             title = item.title.toString()
+                            list.add(movieData(title, imgUrl,item.popularity!!,item.voteAverage!!))
                         }
-                        val s="https://m.media-amazon.com/images/I/71niXI3lxlL._SY679_.jpg"
-                        list.add(movieData(title, s))
+
                     }
                 }
             runBlocking {
@@ -50,7 +50,9 @@ class MainActivityRepo {
 }
 data class movieData (
 val name:String,
-val img:String
+val img:String,
+val popularity:Double,
+val voteAvg:Double
 )
 interface ApiCallbackWithRes<T> {
     fun onSuccess(response: T)

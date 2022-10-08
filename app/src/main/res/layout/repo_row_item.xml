@@ -13,21 +13,8 @@
             android:layout_height="wrap_content"
             android:src="@color/black"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/tv_repo_name"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_repo_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textSize="18sp"
-            app:flow_horizontalAlign="center"
-            app:layout_constraintEnd_toEndOf="@+id/iv_movie"
-           app:layout_constraintStart_toStartOf="@+id/iv_movie"
-            app:layout_constraintTop_toBottomOf="@+id/iv_movie">
-
-        </TextView>
 
 
 
