@@ -10,6 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.trendingrepos.data.Results
+import com.example.trendingrepos.data.movies
 import com.example.trendingrepos.databinding.ActivityMainBinding
 import com.example.trendingrepos.utils.EspressoIdlingResource
 
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var page =1
     private var isLoading=false
     private var isLastPage=false
-    val reposList: MutableList<movieData> = mutableListOf()
+    val reposList: MutableList<Results> = mutableListOf()
     companion object{
         const val SORT_BY_POPULARITY=1
         const val SORT_BY_RATING=2
@@ -74,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             }else if (viewModel.sortState.value== SORT_BY_RATING){
                 binding.sortByVoting.setTextColor(resources.getColor(R.color.red))
                 binding.sortByPopularity.setTextColor(resources.getColor(R.color.black))
-                reposList.sortWith(compareByDescending { it.voteAvg })
+                reposList.sortWith(compareByDescending { it.voteAverage })
             }
 
             if(page==1){

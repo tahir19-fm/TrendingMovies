@@ -31,6 +31,7 @@
                 android:layout_gravity="center"
                 android:text="Popularity"
                 android:paddingLeft="30dp"
+
                 android:layout_weight="0.5"
                 />
             <TextView

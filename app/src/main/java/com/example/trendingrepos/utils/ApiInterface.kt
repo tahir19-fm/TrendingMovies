@@ -1,5 +1,6 @@
 package com.example.trendingrepos.utils
 
+import com.example.trendingrepos.data.Results
 import com.example.trendingrepos.data.movies
 import retrofit2.Response
 import retrofit2.http.GET

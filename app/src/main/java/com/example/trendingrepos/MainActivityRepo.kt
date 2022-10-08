@@ -1,6 +1,7 @@
 package com.example.trendingrepos
 
 import android.util.Log
+import com.example.trendingrepos.data.Results
 import com.example.trendingrepos.data.movies
 import com.example.trendingrepos.utils.ApiInterface
 import com.example.trendingrepos.utils.RetrofitHelper
@@ -11,9 +12,9 @@ import java.util.ArrayList
 class MainActivityRepo {
     @OptIn(DelicateCoroutinesApi::class)
     fun fetchRepositories(
-        param: ApiCallbackWithRes<MutableList<movieData>>
-    ,page:Int) {
-        val list: MutableList<movieData> = ArrayList()
+        param: ApiCallbackWithRes<MutableList<Results>>
+        , page:Int) {
+        val list: MutableList<Results> = ArrayList()
     val retrofit=RetrofitHelper.getRetroInstance().create(ApiInterface::class.java)
         try {
             var movieData:movies
@@ -31,7 +32,7 @@ class MainActivityRepo {
                             val imgUrl=IMAGE_BASE+item.posterPath.toString()
                             Log.d("image",imgUrl)
                             title = item.title.toString()
-                            list.add(movieData(title, imgUrl,item.popularity!!,item.voteAverage!!))
+                            list.add(Results(item.adult,item.backdropPath,item.id,item.title,item.originalLanguage,item.originalTitle,item.overview,imgUrl,item.mediaType,item.genreIds,item.popularity,item.releaseDate,item.video,item.voteAverage,item.voteCount))
                         }
 
                     }
