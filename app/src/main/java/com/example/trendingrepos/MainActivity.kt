@@ -53,9 +53,7 @@ class MainActivity : AppCompatActivity() {
                        page++
                        isLoading=true
                        binding.progressBar.visibility= View.VISIBLE
-                       Handler().postDelayed({
-                           loadMore()
-                       }, 5000)
+                       loadMore()
 
                    }
                 }
