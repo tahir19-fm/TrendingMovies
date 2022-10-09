@@ -3,14 +3,17 @@ package com.example.trendingrepos
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.trendingrepos.databinding.ActivityMovieDetailsBinding
+import com.example.trendingrepos.utils.CheckNetwork
 import com.example.trendingrepos.utils.EspressoIdlingResource
 import com.squareup.picasso.Picasso
 
 class MovieDetailsActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMovieDetailsBinding.inflate(layoutInflater) }
     private lateinit var viewModel: DetailActivityViewModel
+    private lateinit var checkNetwork: CheckNetwork
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -20,7 +23,12 @@ class MovieDetailsActivity : AppCompatActivity() {
         if (BuildConfig.IS_TESTING.get())
             EspressoIdlingResource.increment()
         if (posStr != null) {
-            viewModel.fetchMovieDetail(posStr)
+            if (checkNetwork.isConnected(this)){
+                viewModel.fetchMovieDetail(posStr)
+            }else{
+                Toast.makeText(this, "Check Internet Connection", Toast.LENGTH_SHORT).show()
+            }
+
         }
 
         viewModel.getMovies().observe(this) {

@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.trendingrepos.data.Results
 import com.example.trendingrepos.databinding.ActivityMainBinding
+import com.example.trendingrepos.utils.CheckNetwork
 import com.example.trendingrepos.utils.EspressoIdlingResource
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainActivityViewModel
+    private lateinit var checkNetwork: CheckNetwork
     private var page =1
     private var isLoading=false
     private var isLastPage=false
@@ -64,7 +66,11 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[MainActivityViewModel::class.java]
         if (BuildConfig.IS_TESTING.get())
             EspressoIdlingResource.increment()
-        viewModel.fetchMovies(1)
+        if (checkNetwork.isConnected(this)) {
+            viewModel.fetchMovies(1)
+        }else{
+            Toast.makeText(this, "Check Network Connection", Toast.LENGTH_SHORT).show()
+        }
         viewModel.getMovies().observe(this, Observer {
 //            if(reposList.isNotEmpty()) {
 //                reposList.clear()
@@ -103,12 +109,16 @@ class MainActivity : AppCompatActivity() {
             binding.swipeRefresh.isRefreshing = it
         })
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.setSortState(NO_SORTING)
-            isLoading=true
-            reposList.clear()
-            viewModel.fetchMovies(1)
-            page=1
-        }
+            if (checkNetwork.isConnected(this)) {
+                viewModel.setSortState(NO_SORTING)
+                isLoading = true
+                reposList.clear()
+                viewModel.fetchMovies(1)
+                page = 1
+            }else{
+                Toast.makeText(this, "Check Network Connection", Toast.LENGTH_SHORT).show()
+            }
+            }
         binding.sortByPopularity.setOnClickListener{
             viewModel.setSortState(SORT_BY_POPULARITY)
             reposList.clear()
@@ -122,6 +132,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMore() {
-        viewModel.fetchMovies(page)
+        if(checkNetwork.isConnected(this)) {
+            viewModel.fetchMovies(page)
+        }else{
+            Toast.makeText(this,"Check Network Connection",Toast.LENGTH_SHORT).show()
+        }
     }
 }
